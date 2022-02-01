@@ -1,53 +1,62 @@
 <?php
 
 namespace Core;
-
-use stdClass;
+use Closure;
+use JetBrains\PhpStorm\NoReturn;
 
 class Routes
 {
-	public static function get(string $route, string $action = '', \Closure $closure = null)
+	private static function perform_route_check(string $method, string $route): bool
 	{
+		if ($_SERVER['REQUEST_METHOD'] !== $method)
+			return false;
 		if ($GLOBALS['Http'] !== $route)
+			return false;
+		return true;
+	}
+	public static function get(string $route, string $action = '', Closure $closure = null)
+	{
+		if (!self::perform_route_check('GET', $route))
 			return;
-		if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-			return;
-		}
+
 		if (!$closure)
-			call($action);
-		else {
+			self::call($action);
+		else
 			$closure();
-		}
 		die();
 	}
 	
-	public static function post(string $route, string $action = '', \Closure $closure = null)
+	public static function post(string $route, string $action = '', Closure $closure = null)
 	{
-		if ($GLOBALS['Http'] !== $route)
+		if (!self::perform_route_check('POST', $route))
 			return;
-		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-			return;
-		}
 		
 		if (!$closure)
-			call($action);
-		else {
+			self::call($action);
+		else
 			$closure();
-		}
 		die();
 	}
 	
-	public static function create()
+	#[NoReturn] public static function catch_all()
+	{
+		http_response_code(404);
+		echo '<strong style="font-size: xxx-large">404 not found</strong>';
+		die();
+	}
+	
+	#[NoReturn] public static function create()
 	{
 		require '../routes/web.php';
+		self::catch_all();
 	}
-}
-
-function call($action)
-{
-	$action = explode('@', $action);
-	$action[0] = 'App\\Controllers\\' . $action[0];
 	
-	$obj = new $action[0]();
-	call_user_func([$obj, $action[1]]);
+	private static function call($action)
+	{
+		$action = explode('@', $action);
+		$action[0] = 'App\\Controllers\\' . $action[0];
+		
+		$obj = new $action[0]();
+		call_user_func([$obj, $action[1]]);
+	}
 }
