@@ -17,7 +17,7 @@ It's a kind of artisan like laravel uses, you can generate Models or Controllers
 The prototype is as followed :
 `php manager.php @action @args[]`
 
-/@ Example Commands @/
+Example Commands
 -
 Controller and Model commands automatically extends to default, a way to override will be done later.
 <br>
