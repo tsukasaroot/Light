@@ -3,8 +3,8 @@ Only compatible with php >8.0
 -
 First, need to do a `composer install`.
 - app - Contains Controllers and Models.
-- Controllers - The files called by your Routes.
-- Models - Contains the Database logic for a table.
+- Controllers - The Controller is usually called by your Routes.
+- Models - Contains the Database logic for a table mostly called by Controller to get database informations or specific class methods.
 - Core - The core files of the framework.
 - public - Where the magic is done.
 - routes - Contain your routes, linked either to a function or a Closure.
