@@ -1,8 +1,8 @@
 {
-  "name": "teraapi/teraapi",
+  "name": "Light/Light",
   "type": "project",
-  "description": "The Laravel Framework.",
-  "keywords": ["framework", "laravel"],
+  "description": "Light Framework.",
+  "keywords": ["Light", ,"framework"],
   "license": "MIT",
   "require": {
     "php": "^8.0",

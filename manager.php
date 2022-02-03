@@ -50,7 +50,7 @@ function add_route($argv)
 		if (count($array) === 4)
 			$comment = "\n/* $array[3] */";
 		
-		file_put_contents('routes/web.php', <<<EOF
+		file_put_contents('routes/api.php', <<<EOF
 			$comment
 			Routes::$array[0](route: '$array[1]', $array[2]);
 			EOF
