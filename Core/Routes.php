@@ -1,6 +1,7 @@
 <?php
 
 namespace Core;
+
 use Closure;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -14,11 +15,12 @@ class Routes
 			return false;
 		return true;
 	}
+	
 	public static function get(string $route, string $action = '', Closure $closure = null)
 	{
 		if (!self::perform_route_check('GET', $route))
 			return;
-
+		
 		if (!$closure)
 			self::call($action);
 		else
@@ -29,6 +31,42 @@ class Routes
 	public static function post(string $route, string $action = '', Closure $closure = null)
 	{
 		if (!self::perform_route_check('POST', $route))
+			return;
+		
+		if (!$closure)
+			self::call($action);
+		else
+			$closure();
+		die();
+	}
+	
+	public static function put(string $route, string $action = '', Closure $closure = null)
+	{
+		if (!self::perform_route_check('PUT', $route))
+			return;
+		
+		if (!$closure)
+			self::call($action);
+		else
+			$closure();
+		die();
+	}
+	
+	public static function patch(string $route, string $action = '', Closure $closure = null)
+	{
+		if (!self::perform_route_check('PATCH', $route))
+			return;
+		
+		if (!$closure)
+			self::call($action);
+		else
+			$closure();
+		die();
+	}
+	
+	public static function delete(string $route, string $action = '', Closure $closure = null)
+	{
+		if (!self::perform_route_check('DELETE', $route))
 			return;
 		
 		if (!$closure)
