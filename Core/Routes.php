@@ -85,7 +85,7 @@ class Routes
 	
 	#[NoReturn] public static function create()
 	{
-		require '../routes/web.php';
+		require '../routes/api.php';
 		self::catch_all();
 	}
 	
