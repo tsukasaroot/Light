@@ -2,9 +2,11 @@
 
 namespace Core;
 
+use JetBrains\PhpStorm\NoReturn;
+
 class Kernel
 {
-	public static function web()
+	#[NoReturn] public static function web()
 	{
 		if (empty($_SERVER['REQUEST_METHOD'])) {
 			echo 'nope';
@@ -20,7 +22,7 @@ class Kernel
 			$GLOBALS['Database'][$k] = $v;
 		}
 		
-		Http::receivedInput();
+		Http::received_input();
 		Routes::create();
 	}
 }
