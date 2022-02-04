@@ -1,12 +1,11 @@
 <?php
 
-if (count($argv) < 3) {
-	echo "Not enough arguments";
-	die();
-}
-
 function make_controller($name)
 {
+    if ($name === null) {
+        helper();
+        die();
+    }
 	file_put_contents('app/Controllers/' . $name . '.php', <<<EOF
 		<?php
 		
@@ -21,6 +20,10 @@ function make_controller($name)
 
 function make_model($name)
 {
+    if ($name === null) {
+        helper();
+        die();
+    }
 	file_put_contents('app/Models/' . $name . '.php', <<<EOF
 		<?php
 		
@@ -37,6 +40,10 @@ function make_model($name)
 
 function add_route($argv)
 {
+    if (count($argv) < 3) {
+        helper();
+        die();
+    }
 	for ($i = 2; $i < count($argv); $i++) {
 		$array = explode(',', $argv[$i]);
 		$comment = '';
@@ -58,16 +65,36 @@ function add_route($argv)
 	}
 }
 
+function helper()
+{
+    echo <<<EOF
+    php manager controller - Create a new controller
+    php manager model - Create a new model
+    php add_route - Add a route to routes/api.php
+    EOF;
+}
+
+if (count($argv) === 1) {
+    helper();
+    die();
+}
+
 $call = $argv[1];
 
 switch ($call) {
 	case 'controller':
-		make_controller($argv[2]);
+		make_controller(isset($argv[2]) ? $argv[2] : null);
 		break;
 	case 'model':
-		make_model($argv[2]);
+		make_model(isset($argv[2]) ? $argv[2] : null);
 		break;
 	case 'add_route':
 		add_route($argv);
 		break;
+	case 'help':
+		helper();
+		break;
+	default:
+	    helper();
+	    break;
 }
