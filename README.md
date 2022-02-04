@@ -11,21 +11,21 @@ First, need to do a `composer install`.
 ------------
 Manager
 -
-Is called with `php manager.php` -<br>
+Is called with `php manager` -<br>
 It's a kind of artisan like laravel uses, you can generate Models or Controllers (more to come).
 
 The prototype is as followed :
-`php manager.php @action @args[]`
+`php manager @action @args[]`
 
 Example Commands
 -
 Controller and Model commands automatically extends to default, a way to override will be done later.
 <br>
 *To create a new Controller*<br>
-`php manager.php controller UserController`
+`php manager controller UserController`
 
 *To create a new Model*<br>
-`php manager.php model User`
+`php manager model User`
 
 *To add multiple routes to api.php at once (the method argument is case insensitive)*<br>
-`php manager.php add_route GET,/home POST,/register,RegisterController@execute`
+`php manager add_route GET,/home POST,/register,RegisterController@execute`
