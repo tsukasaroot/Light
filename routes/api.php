@@ -1,13 +1,14 @@
 <?php
 
 use Core\Routes;
+use Core\Http;
 
 Routes::get(route: '/', closure: function () {
-	echo '<h1>Welcome</h1>';
+	Http::sendJson([ 'message' => 'Welcome' ]);
 });
 
 Routes::post(route: '/', closure: function () {
-	echo 'Welcome!';
+	Http::sendJson([ 'message' => 'Welcome' ]);
 });
 
 Routes::post(route: '/welcome', action: 'WelcomeController@test_post');
