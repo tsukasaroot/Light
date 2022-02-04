@@ -18,5 +18,10 @@ class ApiCest
 		$I->seeResponseCodeIs(200);
 		$I->seeResponseIsJson();
 		$I->seeResponseContainsJson([ 'message' => 'received', 'input' => 'test' ]);
+		
+		$I->sendPost('/welcome');
+		$I->seeResponseCodeIs(200);
+		$I->seeResponseIsJson();
+		$I->seeResponseContainsJson([ 'error' => 'Argument not provided' ]);
 	}
 }
