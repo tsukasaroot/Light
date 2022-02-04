@@ -1,6 +1,7 @@
 <?php
 
 namespace Core;
+
 class Kernel
 {
 	public static function web()
@@ -16,7 +17,7 @@ class Kernel
 		$env = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../.env');
 		
 		foreach ($env as $k => $v) {
-			$GLOBALS[$k] = $v;
+			$GLOBALS['Database'][$k] = $v;
 		}
 		
 		Http::receivedInput();

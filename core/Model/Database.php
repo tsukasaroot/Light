@@ -9,6 +9,7 @@ class Database
 	
 	public function __destruct()
 	{
+		if ($this->init)
 		$this->sql->close();
 	}
 	
@@ -16,7 +17,7 @@ class Database
 	{
 		$databases = [];
 		$i = 0;
-		foreach ($GLOBALS as $k => $v) {
+		foreach ($GLOBALS['Database'] as $k => $v) {
 			if (false !== stripos($k, 'db')) {
 				if ($k[2] > $i)
 					$i++;
