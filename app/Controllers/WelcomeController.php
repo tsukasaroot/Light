@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controllers;
+use App\Models\Users;
+
 class WelcomeController extends Controller
 {
 	public function test_post(): bool
@@ -8,7 +10,7 @@ class WelcomeController extends Controller
 		if (empty($this->request['welcome'])) {
 			return $this->response(['error' => 'Argument not provided']);
 		}
-		
+		$user = new Users();
 		return $this->response(['message' => 'received', 'input' => $this->request['welcome']]);
 	}
 }
