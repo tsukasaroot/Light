@@ -3,7 +3,9 @@
 function make_controller($name)
 {
     if ($name === null) {
-        helper();
+        echo <<<EOF
+        php manager controller @name
+        EOF;
         die();
     }
 	file_put_contents('app/Controllers/' . $name . '.php', <<<EOF
@@ -21,7 +23,9 @@ function make_controller($name)
 function make_model($name)
 {
     if ($name === null) {
-        helper();
+        echo <<<EOF
+        php manager model @name
+        EOF;
         die();
     }
 	file_put_contents('app/Models/' . $name . '.php', <<<EOF
@@ -41,7 +45,9 @@ function make_model($name)
 function add_route($argv)
 {
     if (count($argv) < 3) {
-        helper();
+        echo <<<EOF
+        php manager add_route @method,@route,@controller|null
+        EOF;
         die();
     }
 	for ($i = 2; $i < count($argv); $i++) {
