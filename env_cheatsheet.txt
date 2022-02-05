@@ -1,0 +1,16 @@
+/* Multiple databases can be set like followed */
+db1driver=mysql
+db1host=127.0.0.1
+db1name=mydb1
+db1user=root
+db1pwd=123456
+
+db2driver=mysql
+db2host=mydb1
+db2name=root
+db2user=root
+db2pwd=123456
+--------------------------------------------------
+/* The following can be set to alter the default values */
+timezone=Europe/Paris   // default @Europe/Paris
+debug=false             // default @false

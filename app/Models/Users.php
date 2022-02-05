@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use Core\Model\Model;
+use Core\Model;
+
 class Users extends Model
 {
 	protected int $db = 1;

@@ -1,7 +1,6 @@
 <?php
 
-namespace Core\Model;
-
+namespace Core;
 class Model
 {
 	private string $query;

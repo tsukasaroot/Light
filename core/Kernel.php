@@ -22,6 +22,11 @@ class Kernel
 			$GLOBALS['Database'][$k] = $v;
 		}
 		
+		date_default_timezone_set($GLOBALS['timezone'] ?? 'Europe/Paris');
+		
+		error_reporting($GLOBALS['debug'] ?? false);
+		ini_set('display_errors', $GLOBALS['debug'] ?? false);
+		
 		Http::received_input();
 		Routes::create();
 	}
