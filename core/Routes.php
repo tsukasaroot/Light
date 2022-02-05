@@ -79,7 +79,7 @@ class Routes
 	#[NoReturn] public static function catch_all()
 	{
 		http_response_code(404);
-		echo '<strong style="font-size: xxx-large">404 not found</strong>';
+		Http::send_json([ 'Error' => '404 not found' ]);
 		die();
 	}
 	

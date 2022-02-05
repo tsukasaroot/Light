@@ -1,6 +1,6 @@
 <?php
-class ApiCest 
-{    
+class ApiCest
+{
     public function tryHomePage(ApiTester $I)
     {
         $I->sendGet('/');
@@ -23,5 +23,13 @@ class ApiCest
 		$I->seeResponseCodeIs(200);
 		$I->seeResponseIsJson();
 		$I->seeResponseContainsJson([ 'error' => 'Argument not provided' ]);
+	}
+	
+	public function catch_all(ApiTester $I)
+	{
+		$I->sendGet('/t');
+		$I->seeResponseCodeIs(404);
+		$I->seeResponseIsJson();
+		$I->seeResponseContainsJson([ 'Error' => '404 not found' ]);
 	}
 }
