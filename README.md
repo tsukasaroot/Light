@@ -30,3 +30,9 @@ Controller and Model commands automatically extends to default, a way to overrid
 
 *To add multiple routes to api.php at once (the method argument is case insensitive)*<br>
 `php manager add_route GET,/home POST,/register,RegisterController@execute`
+------------
+E2E with codecept
+-
+run `php vendor\codeception\codeception\codecept run`
+
+More tests can be added for new API routes into file test/ApiCest.php
