@@ -7,5 +7,5 @@ use Core\Model;
 class Users extends Model
 {
 	protected int $db = 1;
-	protected string $table = '';
+	protected string $table = 'users';
 }
