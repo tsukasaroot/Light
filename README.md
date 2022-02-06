@@ -8,6 +8,7 @@ First, need to do a `composer install`.
 - Core - The core files of the framework.
 - public - Where the magic is done.
 - routes - Contain your routes, linked either to a function or a Closure.
+- database - Contains migrations/ folder in which we can store the SQL files to migrate
 ------------
 Manager
 -
