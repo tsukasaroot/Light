@@ -25,7 +25,7 @@ class ApiCest
 		$I->seeResponseContainsJson([ 'error' => 'Argument not provided' ]);
 	}
 	
-	public function catch_all(ApiTester $I)
+	public function tryCatch_all(ApiTester $I)
 	{
 		$I->sendGet('/t');
 		$I->seeResponseCodeIs(404);
