@@ -6,7 +6,7 @@ class Migrator
 {
 	private Database $database;
 	private mysqli $driver;
-	const TABLE = "migrate";
+	const TABLE = 'migrate';
 	
 	public function __construct()
 	{
