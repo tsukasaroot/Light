@@ -22,7 +22,7 @@ class Token
 		if ($this->driver->query("SHOW TABLES LIKE '$table'")->num_rows !== 1) {
 			$sql = <<<EOF
 			CREATE TABLE $table (
-			    token VARCHAR(128) NOT NULL,
+			    token VARCHAR(128) PRIMARY KEY UNIQUE NOT NULL,
 			    created_at bigint(11) NOT NULL
 			)
 			EOF;
@@ -30,12 +30,6 @@ class Token
 				echo "Error upon creating $table: " . $this->driver->error . "\n";
 			}
 		}
-	}
-	
-	public function create_token(string $token)
-	{
-		if (!$this->activated)
-			return;
 	}
 	
 	public function check_token()

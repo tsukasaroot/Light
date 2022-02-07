@@ -15,7 +15,7 @@ class Migrator
 		$table = self::TABLE;
 		
 		if ($this->driver->query("SHOW TABLES LIKE '$table'")->num_rows !== 1) {
-			echo "Table $table don't exist\n";
+			echo "\033[31mTable $table don't exist\033[0m\n";
 			$sql = <<<EOF
 			CREATE TABLE $table (
 			    name VARCHAR(50) NOT NULL,
@@ -23,9 +23,9 @@ class Migrator
 			)
 			EOF;
 			if ($this->driver->query($sql)) {
-				echo "\033[31m Table $table created successfully \033[0m \n";
+				echo "\033[32mTable $table created successfully\033[0m\n";
 			} else {
-				echo "Error upon creating $table: " . $this->driver->error . "\n";
+				echo "\033[31mError upon creating $table: " . $this->driver->error . "\033[0m\n";
 			}
 		}
 	}

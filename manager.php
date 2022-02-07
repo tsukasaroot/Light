@@ -1,5 +1,11 @@
 <?php
 
+require 'core/Database.php';
+require 'core/Token.php';
+
+use Core\Database as Database;
+use Core\Token as Token;
+
 function make_controller($name)
 {
 	if ($name === null) {
@@ -71,15 +77,17 @@ function add_route($argv)
 	}
 }
 
-function migrate(string|null $action, string|null $args = null)
+function migrate(string|null $action, string|null $args)
 {
 	$env = parse_ini_file('.env');
 	
 	foreach ($env as $k => $v) {
-		$GLOBALS['Database'][$k] = $v;
+		if (str_starts_with($k, 'db'))
+			$GLOBALS['Database'][$k] = $v;
+		else
+			$GLOBALS[$k] = $v;
 	}
 	
-	require 'core/Database.php';
 	require 'database/Migrator.php';
 	$migrator = new Migrator();
 	
@@ -97,6 +105,46 @@ function migrate(string|null $action, string|null $args = null)
 			break;
 		default:
 			$migrator->do_migration();
+	}
+}
+
+function authKey(string|null $action, string|null $args)
+{
+	$env = parse_ini_file('.env');
+	
+	foreach ($env as $k => $v) {
+		if (str_starts_with($k, 'db'))
+			$GLOBALS['Database'][$k] = $v;
+		else
+			$GLOBALS[$k] = $v;
+	}
+	
+	if (!$GLOBALS['authToken']) {
+		echo "authKey is not activated.";
+		die();
+	}
+	
+	$token_class = new Token();
+	$db = new Database(1);
+	$driver = $db->get_sql();
+	
+	switch ($action) {
+		case 'create':
+			$date = time();
+			$token = uniqid(more_entropy: true);
+			$sql = <<<EOF
+			INSERT INTO tokens VALUES('$token',$date)
+			EOF;
+			if ($driver->query($sql)) {
+				echo "Token added with success, token to use on extern app:\n$token";
+			} else {
+				echo "Error happened when inserting into table token\n";
+				echo $driver->error;
+			}
+			break;
+		default:
+			helper();
+			break;
 	}
 }
 
@@ -131,6 +179,9 @@ switch ($call) {
 		break;
 	case 'migrate':
 		migrate($argv[2] ?? null, $argv[3] ?? null);
+		break;
+	case 'authKey':
+		authKey($argv[2] ?? null, $argv[3] ?? null);
 		break;
 	default:
 		helper();
