@@ -48,15 +48,31 @@ function makeModel($name)
 	);
 }
 
-function addRoute($argv)
+function route($argv)
 {
 	if (count($argv) < 3) {
+		helper();
+		die();
+	}
+	switch ($argv[2]) {
+		case 'add':
+			addRoute($argv);
+			break;
+		default:
+			helper();
+			break;
+	}
+}
+
+function addRoute($argv)
+{
+	if (count($argv) < 4) {
 		echo <<<EOF
-        php manager add_route @method,@route,@controller|null
+        php manager route @action @method,@route,@controller|null
         EOF;
 		die();
 	}
-	for ($i = 2; $i < count($argv); $i++) {
+	for ($i = 3; $i < count($argv); $i++) {
 		$array = explode(',', $argv[$i]);
 		$comment = '';
 		
@@ -153,7 +169,7 @@ function helper()
 	echo <<<EOF
     php manager controller - Create a new controller
     php manager model - Create a new model
-    php manager add_route - Add a route to routes/api.php
+    php manager route - Add a route to routes/api.php
     php manager migrate - Migrate all sql files inside Database/migrations/
     php manager migrate drop @table1,@table2,...
     php manager migrate refresh - Drop all tables present in Database/migrations/ then migrate them back
@@ -174,8 +190,8 @@ switch ($call) {
 	case 'model':
 		makeModel($argv[2] ?? null);
 		break;
-	case 'add_route':
-		addRoute($argv);
+	case 'route':
+		route($argv);
 		break;
 	case 'migrate':
 		migrate($argv[2] ?? null, $argv[3] ?? null);
