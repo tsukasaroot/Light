@@ -32,14 +32,15 @@ class Token
 		}
 	}
 	
-	public function checkToken(string|null $token): bool
+	public function checkToken(string $token): bool
 	{
 		if (!$this->activated)
 			return false;
-		if (!$token) {
+		if ($token === 'null') {
 			Http::sendJson(['error' => 'Token empty']);
 			die();
 		}
+		
 		$table = self::TABLE;
 		$result = $this->driver->query("SELECT created_at FROM $table WHERE token=$token");
 		

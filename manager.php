@@ -140,7 +140,7 @@ function authKey(string|null $action, string|null $args)
 		die();
 	}
 	
-	$token_class = new Token();
+	new Token();
 	$db = new Database(1);
 	$driver = $db->getSql();
 	
