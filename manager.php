@@ -6,7 +6,7 @@ require 'core/Token.php';
 use Core\Database as Database;
 use Core\Token as Token;
 
-function make_controller($name)
+function makeController($name)
 {
 	if ($name === null) {
 		echo <<<EOF
@@ -26,7 +26,7 @@ function make_controller($name)
 	);
 }
 
-function make_model($name)
+function makeModel($name)
 {
 	if ($name === null) {
 		echo <<<EOF
@@ -48,7 +48,7 @@ function make_model($name)
 	);
 }
 
-function add_route($argv)
+function addRoute($argv)
 {
 	if (count($argv) < 3) {
 		echo <<<EOF
@@ -93,7 +93,7 @@ function migrate(string|null $action, string|null $args)
 	
 	switch ($action) {
 		case 'refresh':
-			$migrator->do_refresh();
+			$migrator->doRefresh();
 			break;
 		case 'drop':
 			if (empty($args)) {
@@ -101,10 +101,10 @@ function migrate(string|null $action, string|null $args)
 				die();
 			}
 			$tables = explode(',', $args);
-			$migrator->do_drop($tables);
+			$migrator->doDrop($tables);
 			break;
 		default:
-			$migrator->do_migration();
+			$migrator->doMigration();
 	}
 }
 
@@ -126,7 +126,7 @@ function authKey(string|null $action, string|null $args)
 	
 	$token_class = new Token();
 	$db = new Database(1);
-	$driver = $db->get_sql();
+	$driver = $db->getSql();
 	
 	switch ($action) {
 		case 'create':
@@ -169,13 +169,13 @@ $call = $argv[1];
 
 switch ($call) {
 	case 'controller':
-		make_controller($argv[2] ?? null);
+		makeController($argv[2] ?? null);
 		break;
 	case 'model':
-		make_model($argv[2] ?? null);
+		makeModel($argv[2] ?? null);
 		break;
 	case 'add_route':
-		add_route($argv);
+		addRoute($argv);
 		break;
 	case 'migrate':
 		migrate($argv[2] ?? null, $argv[3] ?? null);

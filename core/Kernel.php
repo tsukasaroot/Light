@@ -1,12 +1,9 @@
 <?php
 
 namespace Core;
-
-use JetBrains\PhpStorm\NoReturn;
-
 class Kernel
 {
-	#[NoReturn] public static function web()
+	public static function web()
 	{
 		if (empty($_SERVER['REQUEST_METHOD'])) {
 			echo 'nope';
@@ -31,9 +28,9 @@ class Kernel
 		ini_set('display_errors', $GLOBALS['debug'] ?? false);
 		
 		$token = new Token();
-		$token->check_token();
+		$token->checkToken(apache_request_headers()['auth-token'] ?? '');
 		
-		Http::received_input();
+		Http::receivedInput();
 		Routes::create();
 	}
 }

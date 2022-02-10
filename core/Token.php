@@ -16,7 +16,7 @@ class Token
 		if (!$this->activated)
 			return;
 		$this->database = new Database(1);
-		$this->driver = $this->database->get_sql();
+		$this->driver = $this->database->getSql();
 		$table = self::TABLE;
 		
 		if ($this->driver->query("SHOW TABLES LIKE '$table'")->num_rows !== 1) {
@@ -32,7 +32,28 @@ class Token
 		}
 	}
 	
-	public function check_token()
+	public function checkToken(string|null $token): bool
+	{
+		if (!$this->activated)
+			return false;
+		if (!$token) {
+			Http::sendJson(['error' => 'Token empty']);
+			die();
+		}
+		$table = self::TABLE;
+		$result = $this->driver->query("SELECT created_at FROM $table WHERE token=$token");
+		
+		if ($result->num_rows === 1) {
+			$date = $result->fetch_assoc();
+			if ($date['created_at'] < strtotime('-30 days')) {
+				Http::sendJson(['error' => 'Token outdated, please renew it.']);
+				die();
+			}
+		}
+		return true;
+	}
+	
+	public function renewToken()
 	{
 	
 	}
