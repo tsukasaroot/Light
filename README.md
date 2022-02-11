@@ -1,4 +1,4 @@
-# Light framework aimed toward APIs
+# Light framework aimed toward APIs (It doesn't have a goal to be usable for real, it's only for learning purposes)
 Only compatible with php >8.0
 -
 First, need to do a `composer install`.
