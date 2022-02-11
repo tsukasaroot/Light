@@ -28,7 +28,8 @@ class Kernel
 		ini_set('display_errors', $GLOBALS['debug'] ?? false);
 		
 		$token = new Token();
-		$token->checkToken(apache_request_headers()['auth-token']);
+		$auth_is_activated = apache_request_headers()['auth-token'] ?? '';
+		$token->checkToken($auth_is_activated);
 		
 		Http::receivedInput();
 		Routes::create();
