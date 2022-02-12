@@ -24,7 +24,7 @@ class Kernel
 		
 		date_default_timezone_set($GLOBALS['timezone'] ?? 'Europe/Paris');
 		
-		error_reporting($GLOBALS['debug'] ?? false);
+		error_reporting(intval($GLOBALS['debug']) ?? false);
 		ini_set('display_errors', $GLOBALS['debug'] ?? false);
 		
 		$token = new Token();
