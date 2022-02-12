@@ -6,8 +6,8 @@ use Core\Token;
 
 Routes::post(route: '/renew_token', closure: function () {
 	$token = new Token();
-	$auth_key_is_activated = apache_request_headers()['auth-token'] ?? '';
-	$token->renewToken($auth_key_is_activated);
+	$token_input = apache_request_headers()['auth-token'] ?? '';
+	$token->renewToken($token_input);
 });
 
 Routes::get(route: '/', closure: function () {

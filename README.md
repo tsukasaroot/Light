@@ -31,6 +31,11 @@ Controller and Model commands automatically extends to default, a way to overrid
 *To add multiple routes to api.php at once (the method argument is case insensitive)*<br>
 `php manager route add GET,/home POST,/register,RegisterController@execute`
 
+*To create a token if authKey is activated, if it worked, token will be output in CLI*<br>
+`php manager authKey create`
+
+You can use `php manager` to have a list of all possible commands.
+
 E2E with codecept
 -
 run `php vendor\codeception\codeception\codecept run`
