@@ -36,10 +36,10 @@ class Token
 		$result = $this->performCheck($token);
 		
 		if ($result === null)
-			return;
+			die();
 		$date = $result->fetch_assoc();
 		if ($date['created_at'] < strtotime('-30 days')) {
-			Http::sendJson(['error' => 'Token outdated, please renew it.']);
+			Http::sendJson(['error' => 'Token outdated, please renew it.'], 401);
 			die();
 		}
 	}
@@ -60,7 +60,7 @@ class Token
 		if ($this->driver->query($sql)) {
 			Http::sendJson(['success' => 'Token added with success', 'token' => $token]);
 		} else {
-			Http::sendJson(['error' => "Error happened when inserting into table token", 'error_msg' => $this->driver->error]);
+			Http::sendJson(['error' => "Error happened when inserting into table token", 'error_msg' => $this->driver->error], 500);
 		}
 	}
 	
@@ -69,7 +69,7 @@ class Token
 		if (!$this->activated)
 			return null;
 		if ($token === 'null') {
-			Http::sendJson(['error' => 'Token empty']);
+			Http::sendJson(['error' => 'Token empty'], 401);
 			die();
 		}
 		
@@ -77,7 +77,7 @@ class Token
 		$result = $this->driver->query("SELECT created_at FROM $table WHERE token='$token'");
 		
 		if ($result->num_rows !== 1) {
-			Http::sendJson(['error' => "Token doesn't exist", 'error_msg' => $this->driver->error]);
+			Http::sendJson(['error' => "Token doesn't exist", 'error_msg' => $this->driver->error], 404);
 			die();
 		}
 		
