@@ -5,7 +5,6 @@ namespace Core;
 class Token
 {
 	private bool $activated;
-	private array $token_list;
 	private \mysqli $driver;
 	private Database $database;
 	const TABLE = 'tokens';
