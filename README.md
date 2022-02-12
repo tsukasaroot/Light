@@ -29,7 +29,7 @@ Controller and Model commands automatically extends to default, a way to overrid
 `php manager model User`
 
 *To add multiple routes to api.php at once (the method argument is case insensitive)*<br>
-`php manager add_route GET,/home POST,/register,RegisterController@execute`
+`php manager route add GET,/home POST,/register,RegisterController@execute`
 
 E2E with codecept
 -

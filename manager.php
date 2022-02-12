@@ -1,6 +1,12 @@
 <?php
 
-function make_controller($name)
+require 'core/Database.php';
+require 'core/Token.php';
+
+use Core\Database as Database;
+use Core\Token as Token;
+
+function makeController($name)
 {
 	if ($name === null) {
 		echo <<<EOF
@@ -20,7 +26,7 @@ function make_controller($name)
 	);
 }
 
-function make_model($name)
+function makeModel($name)
 {
 	if ($name === null) {
 		echo <<<EOF
@@ -42,15 +48,31 @@ function make_model($name)
 	);
 }
 
-function add_route($argv)
+function route($argv)
 {
 	if (count($argv) < 3) {
+		helper();
+		die();
+	}
+	switch ($argv[2]) {
+		case 'add':
+			addRoute($argv);
+			break;
+		default:
+			helper();
+			break;
+	}
+}
+
+function addRoute($argv)
+{
+	if (count($argv) < 4) {
 		echo <<<EOF
-        php manager add_route @method,@route,@controller|null
+        php manager route @action @method,@route,@controller|null
         EOF;
 		die();
 	}
-	for ($i = 2; $i < count($argv); $i++) {
+	for ($i = 3; $i < count($argv); $i++) {
 		$array = explode(',', $argv[$i]);
 		$comment = '';
 		
@@ -71,21 +93,23 @@ function add_route($argv)
 	}
 }
 
-function migrate(string|null $action, string|null $args = null)
+function migrate(string|null $action, string|null $args)
 {
 	$env = parse_ini_file('.env');
 	
 	foreach ($env as $k => $v) {
-		$GLOBALS['Database'][$k] = $v;
+		if (str_starts_with($k, 'db'))
+			$GLOBALS['Database'][$k] = $v;
+		else
+			$GLOBALS[$k] = $v;
 	}
 	
-	require 'core/Database.php';
 	require 'database/Migrator.php';
 	$migrator = new Migrator();
 	
 	switch ($action) {
 		case 'refresh':
-			$migrator->do_refresh();
+			$migrator->doRefresh();
 			break;
 		case 'drop':
 			if (empty($args)) {
@@ -93,10 +117,50 @@ function migrate(string|null $action, string|null $args = null)
 				die();
 			}
 			$tables = explode(',', $args);
-			$migrator->do_drop($tables);
+			$migrator->doDrop($tables);
 			break;
 		default:
-			$migrator->do_migration();
+			$migrator->doMigration();
+	}
+}
+
+function authKey(string|null $action, string|null $args)
+{
+	$env = parse_ini_file('.env');
+	
+	foreach ($env as $k => $v) {
+		if (str_starts_with($k, 'db'))
+			$GLOBALS['Database'][$k] = $v;
+		else
+			$GLOBALS[$k] = $v;
+	}
+	
+	if (!$GLOBALS['authToken']) {
+		echo "authKey is not activated.";
+		die();
+	}
+	
+	new Token();
+	$db = new Database(1);
+	$driver = $db->getSql();
+	
+	switch ($action) {
+		case 'create':
+			$date = time();
+			$token = uniqid(more_entropy: true);
+			$sql = <<<EOF
+			INSERT INTO tokens VALUES('$token',$date)
+			EOF;
+			if ($driver->query($sql)) {
+				echo "Token added with success, token to use on extern app:\n$token";
+			} else {
+				echo "Error happened when inserting into table token\n";
+				echo $driver->error;
+			}
+			break;
+		default:
+			helper();
+			break;
 	}
 }
 
@@ -105,7 +169,7 @@ function helper()
 	echo <<<EOF
     php manager controller - Create a new controller
     php manager model - Create a new model
-    php manager add_route - Add a route to routes/api.php
+    php manager route - Add a route to routes/api.php
     php manager migrate - Migrate all sql files inside Database/migrations/
     php manager migrate drop @table1,@table2,...
     php manager migrate refresh - Drop all tables present in Database/migrations/ then migrate them back
@@ -121,16 +185,19 @@ $call = $argv[1];
 
 switch ($call) {
 	case 'controller':
-		make_controller($argv[2] ?? null);
+		makeController($argv[2] ?? null);
 		break;
 	case 'model':
-		make_model($argv[2] ?? null);
+		makeModel($argv[2] ?? null);
 		break;
-	case 'add_route':
-		add_route($argv);
+	case 'route':
+		route($argv);
 		break;
 	case 'migrate':
 		migrate($argv[2] ?? null, $argv[3] ?? null);
+		break;
+	case 'authKey':
+		authKey($argv[2] ?? null, $argv[3] ?? null);
 		break;
 	default:
 		helper();

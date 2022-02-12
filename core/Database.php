@@ -26,10 +26,10 @@ class Database
 		}
 		
 		if ($db > 0)
-			$this->make_mysql_connection($databases[$db]);
+			$this->makeMysqlConnection($databases[$db]);
 	}
 	
-	private function make_mysql_connection(array $connection)
+	private function makeMysqlConnection(array $connection)
 	{
 		$this->sql = new \mysqli($connection[1], $connection[3],
 			$connection[4], $connection[2]);
@@ -41,7 +41,7 @@ class Database
 		$this->init++;
 	}
 	
-	public function get_sql(): \mysqli|null
+	public function getSql(): \mysqli|null
 	{
 		if ($this->init)
 			return $this->sql;

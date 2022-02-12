@@ -6,16 +6,16 @@ class Migrator
 {
 	private Database $database;
 	private mysqli $driver;
-	const TABLE = "migrate";
+	const TABLE = 'migrate';
 	
 	public function __construct()
 	{
 		$this->database = new Database(1);
-		$this->driver = $this->database->get_sql();
+		$this->driver = $this->database->getSql();
 		$table = self::TABLE;
 		
 		if ($this->driver->query("SHOW TABLES LIKE '$table'")->num_rows !== 1) {
-			echo "Table $table don't exist\n";
+			echo "\033[31mTable $table don't exist\033[0m\n";
 			$sql = <<<EOF
 			CREATE TABLE $table (
 			    name VARCHAR(50) NOT NULL,
@@ -23,14 +23,14 @@ class Migrator
 			)
 			EOF;
 			if ($this->driver->query($sql)) {
-				echo "\033[31m Table $table created successfully \033[0m \n";
+				echo "\033[32mTable $table created successfully\033[0m\n";
 			} else {
-				echo "Error upon creating $table: " . $this->driver->error . "\n";
+				echo "\033[31mError upon creating $table: " . $this->driver->error . "\033[0m\n";
 			}
 		}
 	}
 	
-	public function do_migration()
+	public function doMigration()
 	{
 		$path = 'Database/migrations';
 		$filesToMigrate = scandir($path);
@@ -70,7 +70,7 @@ class Migrator
 		}
 	}
 	
-	public function do_refresh()
+	public function doRefresh()
 	{
 		$path = 'Database/migrations';
 		$filesToMigrate = scandir($path);
@@ -84,11 +84,11 @@ class Migrator
 			$toDrop[] = explode('.', $file)[0];;
 		}
 		
-		$this->do_drop($toDrop);
-		$this->do_migration();
+		$this->doDrop($toDrop);
+		$this->doMigration();
 	}
 	
-	public function do_drop(array $tables)
+	public function doDrop(array $tables)
 	{
 		foreach ($tables as $table) {
 			$sql = <<<EOF

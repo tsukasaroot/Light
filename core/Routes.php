@@ -7,7 +7,7 @@ use JetBrains\PhpStorm\NoReturn;
 
 class Routes
 {
-	private static function perform_route_check(string $method, string $route): bool
+	private static function performRouteCheck(string $method, string $route): bool
 	{
 		if ($_SERVER['REQUEST_METHOD'] !== $method)
 			return false;
@@ -18,7 +18,7 @@ class Routes
 	
 	public static function get(string $route, string $action = '', Closure $closure = null)
 	{
-		if (!self::perform_route_check('GET', $route))
+		if (!self::performRouteCheck('GET', $route))
 			return;
 		
 		if (!$closure)
@@ -30,7 +30,7 @@ class Routes
 	
 	public static function post(string $route, string $action = '', Closure $closure = null)
 	{
-		if (!self::perform_route_check('POST', $route))
+		if (!self::performRouteCheck('POST', $route))
 			return;
 		
 		if (!$closure)
@@ -42,7 +42,7 @@ class Routes
 	
 	public static function put(string $route, string $action = '', Closure $closure = null)
 	{
-		if (!self::perform_route_check('PUT', $route))
+		if (!self::performRouteCheck('PUT', $route))
 			return;
 		
 		if (!$closure)
@@ -54,7 +54,7 @@ class Routes
 	
 	public static function patch(string $route, string $action = '', Closure $closure = null)
 	{
-		if (!self::perform_route_check('PATCH', $route))
+		if (!self::performRouteCheck('PATCH', $route))
 			return;
 		
 		if (!$closure)
@@ -66,7 +66,7 @@ class Routes
 	
 	public static function delete(string $route, string $action = '', Closure $closure = null)
 	{
-		if (!self::perform_route_check('DELETE', $route))
+		if (!self::performRouteCheck('DELETE', $route))
 			return;
 		
 		if (!$closure)
@@ -76,17 +76,17 @@ class Routes
 		die();
 	}
 	
-	#[NoReturn] public static function catch_all()
+	public static function catchAll()
 	{
 		http_response_code(404);
-		Http::send_json([ 'Error' => '404 not found' ]);
+		Http::sendJson([ 'Error' => '404 not found' ]);
 		die();
 	}
 	
-	#[NoReturn] public static function create()
+	public static function create()
 	{
 		require '../routes/api.php';
-		self::catch_all();
+		self::catchAll();
 	}
 	
 	private static function call($action)

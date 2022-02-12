@@ -1,12 +1,9 @@
 <?php
 
 namespace Core;
-
-use JetBrains\PhpStorm\NoReturn;
-
 class Kernel
 {
-	#[NoReturn] public static function web()
+	public static function web()
 	{
 		if (empty($_SERVER['REQUEST_METHOD'])) {
 			echo 'nope';
@@ -19,7 +16,10 @@ class Kernel
 		$env = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../.env');
 		
 		foreach ($env as $k => $v) {
-			$GLOBALS['Database'][$k] = $v;
+			if (str_starts_with($k, 'db'))
+				$GLOBALS['Database'][$k] = $v;
+			else
+				$GLOBALS[$k] = $v;
 		}
 		
 		date_default_timezone_set($GLOBALS['timezone'] ?? 'Europe/Paris');
@@ -27,7 +27,11 @@ class Kernel
 		error_reporting($GLOBALS['debug'] ?? false);
 		ini_set('display_errors', $GLOBALS['debug'] ?? false);
 		
-		Http::received_input();
+		$token = new Token();
+		$auth_is_activated = apache_request_headers()['auth-token'] ?? '';
+		$token->checkToken($auth_is_activated);
+		
+		Http::receivedInput();
 		Routes::create();
 	}
 }

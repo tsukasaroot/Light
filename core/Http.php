@@ -4,7 +4,7 @@ namespace Core;
 
 class Http
 {
-	public static function received_input()
+	public static function receivedInput()
 	{
 		if (empty($_POST) && $json = file_get_contents('php://input')) {
 			$var = [];
@@ -17,7 +17,7 @@ class Http
 		}
 	}
 	
-	public static function send_json($data)
+	public static function sendJson($data)
 	{
 		header('Content-Length: ' . strlen(json_encode($data)));
 		header('Content-Type: application/json; charset=utf-8');
