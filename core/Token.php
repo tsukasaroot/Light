@@ -5,7 +5,7 @@ namespace Core;
 use Core\Caching;
 class Token
 {
-	private bool $activated;
+	public bool $activated;
 	private \mysqli $driver;
 	private Database $database;
 	private Caching $cache;
@@ -87,7 +87,7 @@ class Token
 		if ($this->cache->status) {
 			$t = $this->cache->get(key: $token);
 			if (!$t[$token]) {
-				Http::sendJson(['error' => "Token doesn't exist", 'error_msg' => 'Not found in Memcache'], 404);
+				Http::sendJson(['error' => "Token doesn't exist", 'error_msg' => 'Not found in Memcache: ' . $token], 404);
 				die();
 			}
 		}
