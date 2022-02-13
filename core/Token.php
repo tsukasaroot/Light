@@ -2,11 +2,14 @@
 
 namespace Core;
 
+use Core\Caching;
+
 class Token
 {
 	private bool $activated;
 	private \mysqli $driver;
 	private Database $database;
+	private Caching $cache;
 	const TABLE = 'tokens';
 	
 	public function __construct()
@@ -29,6 +32,8 @@ class Token
 				echo "Error upon creating $table: " . $this->driver->error . "\n";
 			}
 		}
+		
+		$this->cache = new Caching();
 	}
 	
 	public function checkToken(string $token): void
@@ -37,8 +42,13 @@ class Token
 		
 		if ($result === null)
 			die();
-		$date = $result->fetch_assoc();
-		if ($date['created_at'] < strtotime('-30 days')) {
+		
+		if (!is_array($result))
+			$date = $result->fetch_assoc()['created_at'];
+		else
+			$date = $result[$token];
+		
+		if ($date < strtotime('-30 days')) {
 			Http::sendJson(['error' => 'Token outdated, please renew it.'], 401);
 			die();
 		}
@@ -51,6 +61,7 @@ class Token
 		$table = self::TABLE;
 		
 		$this->driver->query("DELETE FROM $table WHERE token='$token'");
+		$this->cache->delete(key: $token);
 		
 		$date = time();
 		$token = uniqid(more_entropy: true);
@@ -58,19 +69,28 @@ class Token
 			INSERT INTO tokens VALUES('$token',$date)
 			EOF;
 		if ($this->driver->query($sql)) {
+			$this->cache->add(key: $token, value: $date);
 			Http::sendJson(['success' => 'Token added with success', 'token' => $token]);
 		} else {
 			Http::sendJson(['error' => "Error happened when inserting into table token", 'error_msg' => $this->driver->error], 500);
 		}
 	}
 	
-	private function performCheck(string $token): \mysqli_result|null
+	private function performCheck(string $token): null|bool|\mysqli_result|array
 	{
 		if (!$this->activated)
 			return null;
 		if ($token === 'null') {
 			Http::sendJson(['error' => 'Token empty'], 401);
 			die();
+		}
+		
+		if ($this->cache->status) {
+			$t = $this->cache->get(key: $token);
+			if (!$t[$token]) {
+				Http::sendJson(['error' => "Token doesn't exist", 'error_msg' => 'Not found in Memcache'], 404);
+				die();
+			}
 		}
 		
 		$table = self::TABLE;
