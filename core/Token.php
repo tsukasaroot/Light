@@ -3,7 +3,6 @@
 namespace Core;
 
 use Core\Caching;
-
 class Token
 {
 	private bool $activated;

@@ -18,20 +18,9 @@ class Caching
 	{
 		$this->memcached = new Memcache();
 		if (!$this->memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
-			//Http::sendJson(['error' => 'Connection failed to Memcache server'], 500);
-			return;
+			Http::sendJson(['error' => 'Connection failed to Memcache server'], 500);
+			die();
 		}
-		
-		/*$this->memcached->add('test', 'success');
-		$test = $this->memcached->get('test');
-		if ($test !== 'success') {
-			//Http::sendJson(['error' => 'Memcache test result not retrieve successfully'], 500);
-			return;
-		}
-		if (!$this->memcached->delete('test')) {
-			//Http::sendJson(['error' => "Memcache couldn't delete correctly the test value"], 500);
-			return;
-		}*/
 		$this->status = true;
 	}
 	

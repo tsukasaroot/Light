@@ -2,9 +2,11 @@
 
 require 'core/Database.php';
 require 'core/Token.php';
+require 'core/Caching.php';
 
 use Core\Database as Database;
 use Core\Token as Token;
+use Core\Caching as Caching;
 
 function makeController($name)
 {
@@ -158,6 +160,19 @@ function authKey(string|null $action, string|null $args)
 				echo $driver->error;
 			}
 			break;
+		case 'load':
+			$memcached = new Memcache();
+			if (!$memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
+				echo 'Connection failed to Memcache server';
+				die();
+			}
+			$result = $driver->query('SELECT * FROM tokens');
+			$result = $result->fetch_all(MYSQLI_ASSOC);
+			for ($i = 0; $i < count($result); $i++) {
+				$memcached->add($result[$i]['token'], $result[$i]['created_at']);
+			}
+			echo 'Tokens loaded in memory';
+			break;
 		default:
 			helper();
 			break;
@@ -174,6 +189,7 @@ function helper()
     php manager migrate drop @table1,@table2,...
     php manager migrate refresh - Drop all tables present in Database/migrations/ then migrate them back
     php manager authKey create - Create a token to use in external App.
+    php manager authKey load - Loads tokens stored in database to Memcache server defined in env file.
     EOF;
 }
 
