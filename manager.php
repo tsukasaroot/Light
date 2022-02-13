@@ -200,8 +200,9 @@ function helper()
     php manager migrate - Migrate all sql files inside Database/migrations/
     php manager migrate drop @table1,@table2,...
     php manager migrate refresh - Drop all tables present in Database/migrations/ then migrate them back
-    php manager authKey create - Create a token to use in external App.
-    php manager authKey load - Loads tokens stored in database to Memcache server defined in env file.
+    php manager authKey create - Create a token to use in external App
+    php manager authKey load - Loads tokens stored in database to Memcache server defined in env file
+    php manager memcache flush - Flush all data contained into Memcache server defined in env file
     EOF;
 }
 
