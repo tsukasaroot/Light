@@ -70,8 +70,8 @@ class Caching
 			$this->memcached->delete($key);
 	}
 	
-	public function append(array $array, string $key, string $value)
+	public function flush(array $array, string $key, string $value)
 	{
-		$this->memcached->append();
+		$this->memcached->flush();
 	}
 }

@@ -8,6 +8,15 @@ use Core\Database as Database;
 use Core\Token as Token;
 use Core\Caching as Caching;
 
+$env = parse_ini_file('.env');
+
+foreach ($env as $k => $v) {
+	if (str_starts_with($k, 'db'))
+		$GLOBALS['Database'][$k] = $v;
+	else
+		$GLOBALS[$k] = $v;
+}
+
 function makeController($name)
 {
 	if ($name === null) {
@@ -97,15 +106,6 @@ function addRoute($argv)
 
 function migrate(string|null $action, string|null $args)
 {
-	$env = parse_ini_file('.env');
-	
-	foreach ($env as $k => $v) {
-		if (str_starts_with($k, 'db'))
-			$GLOBALS['Database'][$k] = $v;
-		else
-			$GLOBALS[$k] = $v;
-	}
-	
 	require 'database/Migrator.php';
 	$migrator = new Migrator();
 	
@@ -128,15 +128,6 @@ function migrate(string|null $action, string|null $args)
 
 function authKey(string|null $action, string|null $args)
 {
-	$env = parse_ini_file('.env');
-	
-	foreach ($env as $k => $v) {
-		if (str_starts_with($k, 'db'))
-			$GLOBALS['Database'][$k] = $v;
-		else
-			$GLOBALS[$k] = $v;
-	}
-	
 	if (!$GLOBALS['authToken']) {
 		echo "authKey is not activated.";
 		die();
@@ -146,6 +137,12 @@ function authKey(string|null $action, string|null $args)
 	$db = new Database(1);
 	$driver = $db->getSql();
 	
+	$memcached = new Memcache();
+	if (!$memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
+		echo 'Connection failed to Memcache server';
+		die();
+	}
+	
 	switch ($action) {
 		case 'create':
 			$date = time();
@@ -154,6 +151,7 @@ function authKey(string|null $action, string|null $args)
 			INSERT INTO tokens VALUES('$token',$date)
 			EOF;
 			if ($driver->query($sql)) {
+				$memcached->add($token, $date);
 				echo "Token added with success, token to use on extern app:\n$token";
 			} else {
 				echo "Error happened when inserting into table token\n";
@@ -161,17 +159,31 @@ function authKey(string|null $action, string|null $args)
 			}
 			break;
 		case 'load':
-			$memcached = new Memcache();
-			if (!$memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
-				echo 'Connection failed to Memcache server';
-				die();
-			}
 			$result = $driver->query('SELECT * FROM tokens');
 			$result = $result->fetch_all(MYSQLI_ASSOC);
 			for ($i = 0; $i < count($result); $i++) {
 				$memcached->add($result[$i]['token'], $result[$i]['created_at']);
 			}
 			echo 'Tokens loaded in memory';
+			break;
+		default:
+			helper();
+			break;
+	}
+}
+
+function memcached(string|null $action, string|null $args)
+{
+	$memcached = new Memcache();
+	if (!$memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
+		echo 'Connection failed to Memcache server';
+		die();
+	}
+	
+	switch ($action) {
+		case 'flush';
+			$memcached->flush();
+			echo 'Memcache has been flushed';
 			break;
 		default:
 			helper();
@@ -215,6 +227,9 @@ switch ($call) {
 		break;
 	case 'authKey':
 		authKey($argv[2] ?? null, $argv[3] ?? null);
+		break;
+	case 'memcache':
+		memcached($argv[2] ?? null, $argv[3] ?? null);
 		break;
 	default:
 		helper();

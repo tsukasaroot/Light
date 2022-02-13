@@ -76,7 +76,7 @@ class Routes
 		die();
 	}
 	
-	public static function catchAll()
+	private static function catchAll()
 	{
 		Http::sendJson([ 'Error' => '404 not found' ], 404);
 		die();
