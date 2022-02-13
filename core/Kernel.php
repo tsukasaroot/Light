@@ -9,6 +9,9 @@ class Kernel
 			echo 'nope';
 			die();
 		}
+		
+		$GLOBALS['start'] = Bench::startTime();
+		
 		$request = $_SERVER['REQUEST_URI'];
 		
 		$GLOBALS['Http'] = $request;

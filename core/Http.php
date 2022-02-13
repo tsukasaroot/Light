@@ -22,6 +22,7 @@ class Http
 		header('Content-Length: ' . strlen(json_encode($data)));
 		header('Content-Type: application/json; charset=utf-8');
 		http_response_code($code);
+		$data['time'] = Bench::endTime($GLOBALS['start']);
 		echo json_encode($data);
 	}
 }
