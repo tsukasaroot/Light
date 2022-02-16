@@ -11,6 +11,9 @@ db2name=mydb2
 db2user=root
 db2pwd=123456
 
+--------------------------------------------------
+/* Configuration of Memcache server is as followed */
+
 MEMCACHED_HOST=127.0.0.1
 MEMCACHED_PORT=11211
 
