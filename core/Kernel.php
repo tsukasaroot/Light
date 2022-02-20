@@ -41,4 +41,8 @@ class Kernel
 		Http::receivedInput();
 		Routes::create();
 	}
+	
+	public static function boot(\Closure $closure) {
+		$closure();
+	}
 }

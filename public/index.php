@@ -2,4 +2,6 @@
 
 require '../vendor/autoload.php';
 
-Core\Kernel::web();
+Core\Kernel::boot(function () {
+	Core\Kernel::web();
+});
