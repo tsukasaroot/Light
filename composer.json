@@ -10,7 +10,8 @@
     "require": {
         "php": "^8.0",
         "ext-mysqli": "*",
-      "ext-memcache": "*"
+      "ext-memcache": "*",
+      "ext-redis": "*"
     },
     "autoload": {
         "psr-4": {

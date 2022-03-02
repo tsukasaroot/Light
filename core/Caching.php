@@ -3,11 +3,15 @@
 namespace Core;
 
 use Memcache;
+use Redis;
 
 class Caching
 {
 	private Memcache $memcached;
-	public bool $status = false;
+	private Redis $redis;
+	
+	public bool $memcache_status = false;
+	public bool $redis_status = false;
 	
 	public function __destruct()
 	{
@@ -16,12 +20,22 @@ class Caching
 	
 	public function __construct()
 	{
-		$this->memcached = new Memcache();
-		if (!$this->memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
-			Http::sendJson(['error' => 'Connection failed to Memcache server'], 500);
-			die();
+		if (isset($GLOBALS['MEMCACHED_HOST']) && $GLOBALS['MEMCACHED_HOST']) {
+			$this->memcached = new Memcache();
+			if ($this->memcached->addServer($GLOBALS['MEMCACHED_HOST'], $GLOBALS['MEMCACHED_PORT'])) {
+				$this->memcache_status = true;
+			}
 		}
-		$this->status = true;
+		
+		if (isset($GLOBALS['REDIS_HOST']) && $GLOBALS['REDIS_HOST']) {
+			$this->redis = new Redis();
+			if ($this->redis->connect($GLOBALS['REDIS_HOST'], intval($GLOBALS['REDIS_PORT']))) {
+				if ($GLOBALS['REDIS_PASSWORD']) {
+					$this->redis->auth($GLOBALS['REDIS_PASSWORD']);
+				}
+				$this->redis_status = true;
+			}
+		}
 	}
 	
 	public function add(array $array = null, string $key = null, string $value = null): bool
@@ -41,7 +55,7 @@ class Caching
 		return $success;
 	}
 	
-	public function get(array $array=null, string $key=null): array
+	public function get(array $array = null, string $key = null): array
 	{
 		$result_array = [];
 		
@@ -57,10 +71,9 @@ class Caching
 		return $result_array;
 	}
 	
-	public function delete(array $array=null, string $key=null)
+	public function delete(array $array = null, string $key = null)
 	{
-		if ($array)
-		{
+		if ($array) {
 			foreach ($array as $item) {
 				$this->memcached->delete($item);
 			}

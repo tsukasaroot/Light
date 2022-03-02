@@ -85,7 +85,7 @@ class Token
 			die();
 		}
 		
-		if ($this->cache->status) {
+		if ($this->cache->memcache_status) {
 			$t = $this->cache->get(key: $token);
 			if (!$t[$token]) {
 				Http::sendJson(['error' => "Token doesn't exist", 'error_msg' => 'Not found in Memcache: ' . $token], 404);
