@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use App\Models\Users;
+use Core\Caching;
 
 class WelcomeController extends Controller
 {
@@ -11,6 +12,11 @@ class WelcomeController extends Controller
 			return $this->response(['error' => 'Argument not provided'], 404);
 		}
 		$user = new Users();
-		return $this->response(['message' => 'received', 'input' => $this->request['welcome']]);
+		$cache = new Caching();
+		
+		if ($cache->redis_status)
+			$arg = $cache->get(key: 'test', method: 'redis');
+		
+		return $this->response(['message' => 'received', 'input' => $this->request['welcome'], 'redis' => $arg]);
 	}
 }
