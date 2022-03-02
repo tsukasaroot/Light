@@ -38,53 +38,101 @@ class Caching
 		}
 	}
 	
-	public function add(array $array = null, string $key = null, string $value = null): bool
+	public function add(array $array = null, string $key = null, string $value = null, string $method = null): bool
 	{
 		$success = false;
 		
-		if ($array) {
-			foreach ($array as $k => $item) {
-				$success = $this->memcached->add($k, $item);
+		if ($method === 'memcached') {
+			if ($array) {
+				foreach ($array as $k => $item) {
+					$success = $this->memcached->add($k, $item);
+				}
+			}
+			
+			if ($key && $value) {
+				$success = $this->memcached->add($key, $value);
 			}
 		}
 		
-		if ($key && $value) {
-			$success = $this->memcached->add($key, $value);
+		if ($method === 'redis') {
+			if ($array) {
+				foreach ($array as $k => $item) {
+					$success = $this->memcached->set($k, $item);
+				}
+			}
+			
+			if ($key && $value) {
+				$success = $this->memcached->set($key, $value);
+			}
 		}
 		
 		return $success;
 	}
 	
-	public function get(array $array = null, string $key = null): array
+	public function get(array $array = null, string $key = null, string $method = null): array
 	{
 		$result_array = [];
 		
-		if ($array) {
-			foreach ($array as $item) {
-				$result_array[$item] = $this->memcached->get($item);
+		if ($method === 'memcached') {
+			if ($array) {
+				foreach ($array as $item) {
+					$result_array[$item] = $this->memcached->get($item);
+				}
 			}
+			
+			if ($key)
+				$result_array[$key] = $this->memcached->get($key);
 		}
 		
-		if ($key)
-			$result_array[$key] = $this->memcached->get($key);
+		if ($method === 'redis') {
+			if ($array) {
+				foreach ($array as $item) {
+					$result_array[$item] = $this->redis->get($item);
+				}
+			}
+			
+			if ($key)
+				$result_array[$key] = $this->redis->get($key);
+		}
 		
 		return $result_array;
 	}
 	
-	public function delete(array $array = null, string $key = null)
+	public function delete(array $array = null, string $key = null, string $method = null): bool
 	{
-		if ($array) {
-			foreach ($array as $item) {
-				$this->memcached->delete($item);
+		$success = false;
+		
+		if ($method === 'memcached') {
+			if ($array) {
+				foreach ($array as $item) {
+					$success = $this->memcached->delete($item);
+				}
 			}
+			
+			if ($key)
+				$success = $this->memcached->delete($key);
 		}
 		
-		if ($key)
-			$this->memcached->delete($key);
+		if ($method === 'redis') {
+			if ($array) {
+				foreach ($array as $item) {
+					$success = $this->redis->del($item);
+				}
+			}
+			
+			if ($key)
+				$success = $this->redis->del($key);
+		}
+		
+		return $success;
 	}
 	
-	public function flush()
+	public function flush(string $method = null)
 	{
-		$this->memcached->flush();
+		if ($method === 'memcached')
+			$this->memcached->flush();
+		
+		if ($method === 'redis')
+			$this->redis->flushAll();
 	}
 }
