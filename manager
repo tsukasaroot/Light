@@ -54,6 +54,7 @@ function makeModel($name)
 		class $name extends Model
 		{
 			protected string \$table = '';
+			protected string \$db = 1;
 		}
 		EOF
 	);
