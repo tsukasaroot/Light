@@ -50,7 +50,7 @@ function makeModel($name)
 		
 		namespace App\Models;
 		
-		use Core\Model\Model;
+		use Core\Model;
 		class $name extends Model
 		{
 			protected string \$table = '';
