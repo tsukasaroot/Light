@@ -1,6 +1,8 @@
 # Light framework aimed toward APIs
 (It doesn't have a goal to be usable for real, it's only for learning purposes)<br>
 Only compatible with php >8.0
+
+https://tsukasaroot.github.io/Light-documentation/manager/ (WIP)
 -
 First, need to do a `composer install`.
 - app - Contains Controllers and Models.
