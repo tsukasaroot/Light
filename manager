@@ -1,12 +1,10 @@
 <?php
 
-require 'core/Database.php';
-require 'core/Token.php';
-require 'core/Caching.php';
+require 'vendor/autoload.php';
 
 use Core\Database as Database;
 use Core\Token as Token;
-use Core\Caching as Caching;
+use Core\Console as Console;
 
 $env = parse_ini_file('.env');
 
@@ -54,7 +52,7 @@ function makeModel($name)
 		class $name extends Model
 		{
 			protected string \$table = '';
-			protected string \$db = 1;
+			protected int \$db = 1;
 		}
 		EOF
 	);
@@ -213,7 +211,12 @@ function helper()
 
 function version()
 {
-    echo "V 0.1";
+    echo "V 0.2";
+}
+
+function execute(string $class_name, string $function, array $args = null)
+{
+	Console::run($class_name, $function);
 }
 
 if (count($argv) === 1) {
@@ -241,6 +244,9 @@ switch ($call) {
 		break;
 	case 'memcache':
 		memcached($argv[2] ?? null, $argv[3] ?? null);
+		break;
+	case 'execute':
+		execute($argv[2] ?? null, $argv[3] ?? null);
 		break;
 	case '--version':
 	    version();
