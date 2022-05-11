@@ -9,7 +9,7 @@ class Routes
 	{
 		if ($_SERVER['REQUEST_METHOD'] !== $method)
 			return false;
-		if ($GLOBALS['Http'] !== $route)
+		if (explode('?', $GLOBALS['Http'])[0] !== $route)
 			return false;
 		return true;
 	}

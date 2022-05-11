@@ -13,6 +13,9 @@ class Controller
 		foreach ($_POST as $key => $item) {
 			$this->request[filter_var($key, FILTER_SANITIZE_STRING)] = filter_var($item, FILTER_SANITIZE_STRING);
 		}
+		foreach ($_GET as $key => $item) {
+			$this->request[filter_var($key, FILTER_SANITIZE_STRING)] = filter_var($item, FILTER_SANITIZE_STRING);
+		}
 	}
 	
 	public function response(array|string $arg, int $code=200): bool
