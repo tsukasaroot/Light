@@ -45,12 +45,18 @@ class Model
 		}
 		return $this;
 	}
-	
+
 	public function get(): object|array|bool
 	{
-		return $this->sql
-				->query($this->query)
-				->fetch_all() ?? false;
+		$array = [];
+
+		$r = $this->sql->query($this->query);
+		while ($rows = $r->fetch_assoc()) {
+			$array[] = $rows;
+			unset($rows);
+		}
+		$r->free_result();
+		return $array;
 	}
 	
 	public function getRow(): object|array|null
@@ -75,6 +81,26 @@ class Model
 		} else {
 			$this->query .= $args . ' ';
 		}
+		return $this;
+	}
+
+	public function insert(array|string $args, string $cols): static
+	{
+		$this->query = "INSERT INTO $this->table ($cols) VALUES (";
+
+		if (is_array($args)) {
+			$buildQuery = http_build_query($args, null, ',');
+			$buildQuery = str_replace(':', '=', $buildQuery);
+			$buildQuery = str_replace(',', ',', $buildQuery);
+			$buildQuery = str_replace('%22', '"', $buildQuery);
+			$buildQuery = str_replace('+', " ", $buildQuery);
+			$buildQuery = str_replace('%27', "'", $buildQuery);
+			$buildQuery = str_replace('%2B', "+", $buildQuery);
+			$this->query .= $buildQuery . ")";
+		} else {
+			$this->query .= $args . ")";
+		}
+
 		return $this;
 	}
 	
