@@ -24,7 +24,7 @@ class Token
 		if ($this->driver->query("SHOW TABLES LIKE '$table'")->num_rows !== 1) {
 			$sql = <<<EOF
 			CREATE TABLE $table (
-			    token VARCHAR(128) PRIMARY KEY UNIQUE NOT NULL,
+			    token VARCHAR(128) PRIMARY KEY NOT NULL,
 			    created_at bigint(11) NOT NULL
 			)
 			EOF;
