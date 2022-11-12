@@ -12,7 +12,13 @@ class Database
 	public function __destruct()
 	{
 		if ($this->init)
-		$this->sql->close();
+			$this->sql->close();
+	}
+	
+	public function _close()
+	{
+		if ($this->init)
+			$this->sql->close();
 	}
 	
 	public function __construct($db)

@@ -3,6 +3,7 @@
 namespace Core;
 
 use Closure;
+
 class Routes
 {
 	private static function performRouteCheck(string $method, string $route): bool
@@ -74,14 +75,26 @@ class Routes
 		die();
 	}
 	
+	private static function options()
+	{
+		if ($_SERVER['REQUEST_METHOD'] !== 'OPTIONS')
+			return;
+		header ("Access-Control-Allow-Headers: Content-Type, Authorization, Accept, Accept-Language, X-Authorization");
+		//if you need special headers
+		//header('Access-Control-Allow-Headers: x-requested-with');
+		http_response_code(200);
+		die();
+	}
+	
 	private static function catchAll()
 	{
-		Http::sendJson([ 'Error' => '404 not found' ], 404);
+		Http::sendJson(['Error' => '404 not found'], 404);
 		die();
 	}
 	
 	public static function create()
 	{
+		self::options();
 		require '../routes/api.php';
 		self::catchAll();
 	}

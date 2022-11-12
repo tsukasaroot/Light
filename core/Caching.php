@@ -145,7 +145,7 @@ class Caching
 		return $success;
 	}
 	
-	public function flush(string $method = null)
+	public function flush(string $method = null): void
 	{
 		if ($method === 'memcached')
 			$this->memcached->flush();
